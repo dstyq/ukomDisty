@@ -30,7 +30,6 @@
         <td>{{ $item->stok }}</td>
         <td>
             @if($item->foto)
-                <!-- Gunakan asset() untuk menampilkan foto -->
                 <img src="{{ asset($item->foto) }}" alt="Foto Barang" width="50" class="img-fluid">
             @else
                 <span>No Image</span>

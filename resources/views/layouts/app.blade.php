@@ -98,6 +98,6 @@
     </div>
 
     <!-- Menyertakan Bootstrap JS dan dependensinya -->
-    <script src="{{ asset('bootstrap-5.3.3/js/bundle.min.js') }}"></script>
+    <script src="{{ asset('bootstrap-5.3.3/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

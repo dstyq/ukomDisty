@@ -69,41 +69,43 @@ class DataBarangController extends Controller
     {
         // Validasi input
         $request->validate([
-            'id_barang' => 'required|unique:data_barang,id_barang,' . $id, // ID harus unik, kecuali untuk data yang sedang diedit
+            'id_barang' => 'required|unique:data_barang,id_barang,' . $id . ',id_barang',  // Perbaiki validasi untuk mengecualikan ID yang sedang diedit
             'nama_barang' => 'required|string|max:255',
             'harga' => 'required|integer',
             'stok' => 'required|integer',
             'foto' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
-
-        // Menemukan barang yang akan diupdate
+    
+        // Menemukan barang berdasarkan ID
         $barang = DataBarang::findOrFail($id);
-
+    
         // Mengelola foto jika diupload
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
             if ($barang->foto && file_exists(public_path($barang->foto))) {
-                unlink(public_path($barang->foto)); // Menghapus foto lama
+                unlink(public_path($barang->foto));  // Menghapus foto lama
             }
-
+    
             // Menyimpan foto baru ke folder public/foto
             $fotoName = time() . '.' . $request->file('foto')->getClientOriginalExtension();
-            $fotoPath = public_path('foto') . '/' . $fotoName;  // Menentukan path file foto
-            $request->file('foto')->move(public_path('foto'), $fotoName);  // Memindahkan file ke folder public/foto
-            $barang->foto = 'foto/' . $fotoName; // Menyimpan path relatif foto
+            $fotoPath = 'foto/' . $fotoName;
+            $request->file('foto')->move(public_path('foto'), $fotoName);
+    
+            // Update foto path di database
+            $barang->foto = $fotoPath;
         }
-
-        // Update data barang tanpa mengubah foto jika foto tidak diupload
+    
+        // Memperbarui data barang tanpa mengubah foto jika foto tidak diupload
         $barang->update([
             'id_barang' => $request->id_barang,
             'nama_barang' => $request->nama_barang,
             'harga' => $request->harga,
             'stok' => $request->stok,
         ]);
-
+    
         return redirect()->route('databarang.index')->with('success', 'Barang berhasil diperbarui!');
     }
-
+    
     // Menghapus data barang
     public function destroy($id)
     {
